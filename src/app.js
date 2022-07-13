@@ -1,8 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-# const db = require('./config/db.config');
-# const dbConnection = db.connection;
+const db = require('./config/db.config');
+const dbConnection = db.connection;
+require('dotenv').config()
+
 var corsOptions = {
   origin: "http://localhost:8081"
 };
