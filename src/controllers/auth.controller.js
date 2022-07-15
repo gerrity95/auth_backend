@@ -1,94 +1,75 @@
-const config = require("../config/auth.config");
-const db = require("../models");
+const config = require('../config/auth.config');
+const authService = require('../services/auth.service');
+const db = require('../models');
 const User = db.user;
 const Role = db.role;
-var jwt = require("jsonwebtoken");
-var bcrypt = require("bcryptjs");
-exports.signup = (req, res) => {
-  const user = new User({
-    username: req.body.username,
-    email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 8)
-  });
-  user.save((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }
-    if (req.body.roles) {
-      Role.find(
-        {
-          name: { $in: req.body.roles }
-        },
-        (err, roles) => {
-          if (err) {
-            res.status(500).send({ message: err });
-            return;
-          }
-          user.roles = roles.map(role => role._id);
-          user.save(err => {
-            if (err) {
-              res.status(500).send({ message: err });
-              return;
-            }
-            res.send({ message: "User was registered successfully!" });
-          });
-        }
-      );
-    } else {
-      Role.findOne({ name: "user" }, (err, role) => {
+const RefreshToken = db.refreshToken;
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+
+
+exports.signup = async function(req, res, next) {
+  /* Some reason not working whene extracted to a new function need to figure it out */
+  try {
+    const user = new User({
+      username: req.body.username,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, 8),
+    });
+    user.save(async (err, user) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send({message: err});
+      }
+      Role.findOne({name: 'user'}, async (err, role) => {
         if (err) {
-          res.status(500).send({ message: err });
-          return;
+          console.log(err);
+          return res.status(500).send({message: err});
         }
         user.roles = [role._id];
-        user.save(err => {
+        user.save(async (err) => {
           if (err) {
-            res.status(500).send({ message: err });
-            return;
+            console.log(err);
+            return res.status(500).send({message: err});
           }
-          res.send({ message: "User was registered successfully!" });
+          console.log('User was registered successfully!' );
+          const token = jwt.sign({id: user.id}, config.secret, {
+            expiresIn: config.jwtExpiration,
+          });
+          const refreshToken = await RefreshToken.createToken(user);
+          return res.status(200).send({
+            id: user._id,
+            accessToken: token,
+            refreshToken: refreshToken,
+          });
         });
-      });
-    }
-  });
-};
-exports.signin = (req, res) => {
-  User.findOne({
-    username: req.body.username
-  })
-    .populate("roles", "-__v")
-    .exec((err, user) => {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
-      }
-      if (!user) {
-        return res.status(404).send({ message: "User Not found." });
-      }
-      var passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password
-      );
-      if (!passwordIsValid) {
-        return res.status(401).send({
-          accessToken: null,
-          message: "Invalid Password!"
-        });
-      }
-      var token = jwt.sign({ id: user.id }, config.secret, {
-        expiresIn: 86400 // 24 hours
-      });
-      var authorities = [];
-      for (let i = 0; i < user.roles.length; i++) {
-        authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
-      }
-      res.status(200).send({
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        roles: authorities,
-        accessToken: token
       });
     });
+  } catch (err) {
+    console.log('Error attempting to Sign up');
+    console.log(err);
+    return next(err);
+  }
+};
+
+exports.signin = async function(req, res, next) {
+  try {
+    const signinDetails = await authService.signIn(req);
+    return res.status(signinDetails.status).send(signinDetails.data);
+  } catch (err) {
+    console.log('Error attempting to Sign In');
+    console.log(err);
+    return next(err);
+  }
+};
+
+exports.refreshToken = async (req, res, next) => {
+  try {
+    const refreshToken = await authService.refreshToken(req);
+    return res.status(refreshToken.status).send(refreshToken.data);
+  } catch (err) {
+    console.log('Error attempting to Sign In');
+    console.log(err);
+    return next(err);
+  };
 };
