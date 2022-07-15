@@ -1,3 +1,5 @@
+
+const logger = require('../middleware/logger');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -17,10 +19,10 @@ const options = {
 
 const url = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?directConnection=true&authSource=${MONGO_DB}&replicaSet=replicaset&retryWrites=true`;
 const connection = mongoose.connect(url, options).then( function() {
-  console.log('MongoDB is connected');
+  logger.info('MongoDB is connected');
 })
     .catch( function(err) {
-      console.log(err);
+      logger.info(err);
     });
 
 module.exports = {

@@ -5,8 +5,8 @@ services:
   nodejs:
     image: auth_backend:0.0.1
     build:
-      context: ..
-      dockerfile: ./docker/Dockerfile
+      context: .
+      dockerfile: Dockerfile
     container_name: nodejs
     restart: unless-stopped
     env_file: .env
@@ -23,7 +23,7 @@ services:
       - /home/node/app/node_modules
     networks:
       - app-network
-    command: ./scripts/wait-for.sh db:27017 -- /home/node/app/node_modules/.bin/pm2-runtime start ecosystem.config.js
+    #command: /home/node/app/node_modules/.bin/pm2-runtime start ecosystem.config.js
   db:
     image: mongo
     container_name: db
