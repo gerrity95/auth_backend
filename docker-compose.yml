@@ -17,13 +17,13 @@ services:
       - MONGO_PORT=$MONGO_PORT
       - MONGO_DB=$MONGO_DB
     ports:
-      - "3000:3000"
+      - "8080:8080"
     volumes:
-      - ..:/home/node/app
+      - .:/home/node/app
       - /home/node/app/node_modules
     networks:
       - app-network
-    #command: /home/node/app/node_modules/.bin/pm2-runtime start ecosystem.config.js
+    command: /home/node/app/node_modules/.bin/pm2-runtime start ecosystem.config.js
   db:
     image: mongo
     container_name: db
