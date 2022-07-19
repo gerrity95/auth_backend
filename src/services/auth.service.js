@@ -1,4 +1,6 @@
+const logger = require('../middleware/logger');
 const config = require('../config/auth.config');
+const authHelper = require('../utils/auth.helpers');
 const db = require('../models');
 const User = db.user;
 const Role = db.role;
@@ -7,40 +9,32 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 async function signUp(req) {
-  const user = new User({
-    username: req.body.username,
-    email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 8),
-  });
-  user.save(async (err, user) => {
-    if (err) {
-      console.log(err);
-      return {status: 500, data: {message: err}};
-    }
-    Role.findOne({name: 'user'}, async (err, role) => {
-      if (err) {
-        console.log(err);
-        return {status: 500, data: {message: err}};
-      }
-      user.roles = [role._id];
-      user.save(async (err) => {
-        if (err) {
-          console.log(err);
-          return {status: 500, data: {message: err}};
-        }
-        console.log('User was registered successfully!' );
-        const token = jwt.sign({id: user.id}, config.secret, {
-          expiresIn: config.jwtExpiration,
-        });
-        const refreshToken = await RefreshToken.createToken(user);
-        return {'status': 200, 'data': {
-          id: user._id,
-          accessToken: token,
-          refreshToken: refreshToken,
-        }};
-      });
+  try {
+    logger.info('Attempting to register a new user..');
+    const role = await Role.findOne({name: 'user'});
+    const user = new User({
+      username: req.body.username,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, 8),
+      roles: [role._id],
     });
-  });
+    const newUser = await user.save();
+    logger.info('User was registered successfully!');
+    logger.info('Generating tokens for:' + user.id);
+    const token = jwt.sign({id: user.id}, config.secret, {
+      expiresIn: config.jwtExpiration,
+    });
+    const refreshToken = await RefreshToken.createToken(user);
+    return {status: 200, data: {
+      id: newUser._id,
+      accessToken: token,
+      refreshToken: refreshToken,
+    }};
+  } catch (err) {
+    logger.error('Error attempting to Create User');
+    logger.error(err);
+    throw (err);
+  }
 }
 
 async function signIn(req) {
@@ -93,9 +87,11 @@ async function refreshToken(req) {
     const newAccessToken = jwt.sign({id: refreshToken.user._id}, config.secret, {
       expiresIn: config.jwtExpiration,
     });
+    const updatedRefreshToken = await authHelper.updateRefreshExpiry(requestToken);
+
     return {status: 200, data: {
       accessToken: newAccessToken,
-      refreshToken: refreshToken.token,
+      refreshToken: updatedRefreshToken.token,
     }};
   } catch (err) {
     return {status: 500, data: {message: err}};
