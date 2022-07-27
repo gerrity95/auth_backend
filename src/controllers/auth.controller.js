@@ -1,13 +1,5 @@
-const config = require('../config/auth.config');
 const authService = require('../services/auth.service');
-const db = require('../models');
-const User = db.user;
-const Role = db.role;
-const RefreshToken = db.refreshToken;
-
 const logger = require('../middleware/logger');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 
 
 exports.signup = async function(req, res, next) {
