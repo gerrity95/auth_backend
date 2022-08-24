@@ -11,9 +11,11 @@ const bcrypt = require('bcryptjs');
 async function signUp(req) {
   try {
     logger.info('Attempting to register a new user..');
+    console.log(req.body);
     const role = await Role.findOne({name: 'user'});
+    console.log(role);
     const user = new User({
-      username: req.body.username,
+      username: req.body.username.toLowerCase(),
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, 8),
       roles: [role._id],
@@ -39,8 +41,9 @@ async function signUp(req) {
 
 async function signIn(req) {
   try {
-    const user = await User.findOne({username: req.body.username});
+    const user = await User.findOne({username: req.body.username.toLowerCase()});
     if (!user) {
+      logger.info('Username not found.');
       return {status: 404, data: {message: 'Uset Not Found'}};
     }
     const passwordIsValid = bcrypt.compareSync(
@@ -70,17 +73,21 @@ async function signIn(req) {
 };
 
 async function refreshToken(req) {
+  logger.info('Attempting to refresh access token using refresh token..');
   const {refreshToken: requestToken} = req.body;
   if (requestToken == null) {
+    logger.info('Refresh token missing from request body');
     return {status: 403, data: {message: 'Refresh Token is required!'}};
   }
   try {
     const refreshToken = await RefreshToken.findOne({token: requestToken});
     if (!refreshToken) {
+      logger.info('Token is not in the database');
       return {status: 403, data: {message: 'Refresh token is not in database!'}};
     }
     if (RefreshToken.verifyExpiration(refreshToken)) {
       RefreshToken.findByIdAndRemove(refreshToken._id, {useFindAndModify: false}).exec();
+      logger.info('Refresh token has expired...');
       return {status: 403, data: {
         message: 'Refresh token has expired. Plase make another login request'}};
     }
@@ -94,6 +101,8 @@ async function refreshToken(req) {
       refreshToken: updatedRefreshToken.token,
     }};
   } catch (err) {
+    logger.error('Error attempting to refresh token.');
+    logger.error(err);
     return {status: 500, data: {message: err}};
   }
 }

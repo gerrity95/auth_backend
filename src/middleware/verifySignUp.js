@@ -14,7 +14,7 @@ const checkDuplicateUsernameOrEmail = async (req, res, next) => {
   // Username
   logger.info('Attempting to verify username & email');
   User.findOne({
-    username: req.body.username,
+    username: req.body.username.toLowerCase(),
   }).exec((err, user) => {
     if (err) {
       res.status(500).send({message: err});
@@ -54,6 +54,5 @@ const validatePassword = async (req, res, next) => {
 
 const verifySignUp = {
   checkDuplicateUsernameOrEmail,
-  validatePassword,
 };
 module.exports = verifySignUp;
