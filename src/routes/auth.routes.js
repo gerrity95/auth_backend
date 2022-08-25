@@ -14,20 +14,18 @@ router.use(function(req, res, next) {
   next();
 });
 
-router.post('/api/auth/signup',
+router.post('/signup',
     [
       verifySignUp.checkDuplicateUsernameOrEmail,
       // verifySignUp.validatePassword,
     ],
     controller.signup);
 
-router.post('/api/auth/signin', controller.signin);
+router.post('/signin', controller.signin);
 
-router.post('/api/auth/refreshtoken', controller.refreshToken);
+router.post('/refreshtoken', controller.refreshToken);
 
-module.exports = {
-  router: router,
-};
+module.exports = router;
 
 router.post('/addRoles', async (req, res, next) => {
   new Role({

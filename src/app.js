@@ -3,8 +3,7 @@ const cors = require('cors');
 const app = express();
 const db = require('./config/db.config');
 db.connection;
-const authRouter = require('./routes/auth.routes');
-const userRouter = require('./routes/user.routes');
+const routes = require('./routes');
 require('dotenv').config();
 
 const corsOptions = {
@@ -17,8 +16,8 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 // simple route
 
-app.use('/', authRouter.router);
-app.use('/', userRouter.router);
+app.use('/api', routes);
+
 
 app.get('/', (req, res) => {
   res.json({message: 'Welcome to Auth application.'});

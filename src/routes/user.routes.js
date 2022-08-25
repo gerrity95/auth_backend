@@ -12,10 +12,8 @@ router.use(function(req, res, next) {
   next();
 });
 
-router.get('/api/all', controller.allAccess);
+router.get('/all', controller.allAccess);
 
-router.get('/api/user', [authJwt.verifyToken], controller.userDetails);
+router.get('/', [authJwt.verifyToken], controller.userDetails);
 
-module.exports = {
-  router: router,
-};
+module.exports = router;
