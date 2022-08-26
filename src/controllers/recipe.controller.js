@@ -10,7 +10,7 @@ exports.createRecipe = async function(req, res, next) {
     return res.status(recipeDetails.status).send(recipeDetails.data);
   } catch (err) {
     logger.error('Error attempting to create new recipe');
-    logger.error(err);
+    logger.info(err);
     return next(err);
   }
 };

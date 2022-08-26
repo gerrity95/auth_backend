@@ -13,6 +13,7 @@ module.exports = createLogger({
       format: format.combine(
           format.timestamp({format: 'MMM-DD-YYYY HH:mm:ss'}),
           format.align(),
+          format.errors({stack: true}),
           format.printf((info) => `${info.level}: ${[info.timestamp]}: ${info.message}`),
       )}),
   ],

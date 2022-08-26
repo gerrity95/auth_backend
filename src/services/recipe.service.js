@@ -6,9 +6,6 @@ const Category = db.category;
 const ApiError = require('../utils/ApiError');
 
 async function createRecipe(req) {
-  logger.info('Attempting to create a new recipe..');
-  console.log(req.body);
-
   // TODO Get category ID
   const categoryId = await Category.findOne({name: req.body.category});
   if (!categoryId) {
@@ -18,7 +15,7 @@ async function createRecipe(req) {
     const recipeBody = {
       name: req.body.name,
       description: req.body.description,
-      category: [req.body.category],
+      category: [categoryId.name],
       ingredients: req.body.ingredients,
       ...(typeof req.body.is_sample != 'undefined') && {is_sample: req.body.is_sample},
       ...(typeof req.body.servings != 'undefined') && {servings: req.body.servings},
@@ -38,7 +35,8 @@ async function createRecipe(req) {
   } catch (err) {
     logger.error('Error attempting to Create New Recipe');
     logger.error(err);
-    throw (err);
+    console.log(err);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error attempting to create recipe');
   }
 }
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const authRouter = require('./auth.routes');
 const userRouter = require('./user.routes');
+const inputRouter = require('./input.routes');
 const recipeRouter = require('./recipe.routes');
 
 const router = express.Router();
@@ -17,6 +18,10 @@ const defaultRoutes = [
   {
     path: '/recipe',
     route: recipeRouter,
+  },
+  {
+    path: '/input',
+    route: inputRouter,
   },
 ];
 
