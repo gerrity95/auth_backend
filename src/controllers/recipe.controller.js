@@ -7,7 +7,7 @@ exports.createRecipe = async function(req, res, next) {
   try {
     logger.info('Attempting to create new recipe...');
     const recipeDetails = await recipeService.createRecipe(req);
-    return res.status(recipeDetails.status).send(recipeDetails.data);
+    return res.send(recipeDetails.data);
   } catch (err) {
     logger.error('Error attempting to create new recipe');
     logger.info(err);

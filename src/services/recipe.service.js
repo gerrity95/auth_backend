@@ -29,9 +29,7 @@ async function createRecipe(req) {
 
     const recipe = new Recipe(recipeBody);
     const newRecipe = await recipe.save();
-    return {status: httpStatus.OK, data: {
-      id: newRecipe._id,
-    }};
+    return {id: newRecipe._id};
   } catch (err) {
     logger.error('Error attempting to Create New Recipe');
     logger.error(err);
