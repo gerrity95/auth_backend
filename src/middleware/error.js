@@ -16,9 +16,9 @@ const errorConverter = (err, req, res, next) => {
 
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => {
-  let {statusCode, message} = err;
-  statusCode = httpStatus.INTERNAL_SERVER_ERROR;
-  message = httpStatus[httpStatus.INTERNAL_SERVER_ERROR];
+  const {statusCode, message} = err;
+  // statusCode = httpStatus.INTERNAL_SERVER_ERROR;
+  // message = httpStatus[httpStatus.INTERNAL_SERVER_ERROR];
 
   res.locals.errorMessage = err.message;
 
@@ -27,6 +27,7 @@ const errorHandler = (err, req, res, next) => {
     message,
     stack: err.stack,
   };
+  console.log(err);
   logger.error(err);
   res.status(statusCode).send(response);
 };

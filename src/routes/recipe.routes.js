@@ -14,7 +14,7 @@ const controller = require('../controllers/recipe.controller');
 // });
 
 // GET REQUESTS
-// router.get('/api/auth/recipe/:recipeId', validation.getRecipe, controller.getRecipe);
+router.get('/:recipeId', [validate(validation.getRecipe)], controller.getRecipe);
 
 // POST REQUESTS
 // router.post('/api/auth/recipe', [authJwt.verifyToken, validation.createRecipe], controller.createRecipe);

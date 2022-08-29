@@ -6,7 +6,6 @@ const Category = db.category;
 const ApiError = require('../utils/ApiError');
 
 async function createRecipe(req) {
-  // TODO Get category ID
   const categoryId = await Category.findOne({name: req.body.category});
   if (!categoryId) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid Category submitted');
@@ -38,7 +37,12 @@ async function createRecipe(req) {
   }
 }
 
+async function getRecipeById(recipeId) {
+  return await Recipe.findById(recipeId);
+}
+
 
 module.exports= {
   createRecipe,
+  getRecipeById,
 };

@@ -20,7 +20,7 @@ const createRecipe = {
 
 const getRecipe = {
   params: Joi.object().keys({
-    scenarioId: Joi.string().custom(objectId),
+    recipeId: Joi.string().custom(objectId),
   }),
 };
 
