@@ -20,5 +20,7 @@ router.get('/:recipeId', [validate(validation.getRecipe)], controller.getRecipe)
 // router.post('/api/auth/recipe', [authJwt.verifyToken, validation.createRecipe], controller.createRecipe);
 router.post('/', [validate(validation.createRecipe)], controller.createRecipe);
 
+// Temp endpoint for bulk adding sample recipes
+router.post('/bulkrecipes', [validate(validation.bulkRecipes)], controller.bulkRecipes);
 
 module.exports = router;

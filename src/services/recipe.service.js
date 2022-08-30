@@ -4,6 +4,7 @@ const db = require('../models/index');
 const Recipe = db.recipe;
 const Category = db.category;
 const ApiError = require('../utils/ApiError');
+const { validateCategories } = require('../utils/recipe.helper');
 
 async function createRecipe(req) {
   const categoryId = await Category.findOne({name: req.body.category});
@@ -41,8 +42,21 @@ async function getRecipeById(recipeId) {
   return await Recipe.findById(recipeId);
 }
 
+async function bulkAddRecipes(body) {
+  const recipes = body.recipes;
+  const validCategories = await validateCategories(recipes);
+  if (!validCategories) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid categories passed in recipe body.');
+  }
+  const bulkAdd = await Recipe.insertMany(recipes);
+  logger.info(bulkAdd);
+
+  return bulkAdd;
+}
+
 
 module.exports= {
   createRecipe,
   getRecipeById,
+  bulkAddRecipes,
 };

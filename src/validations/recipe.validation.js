@@ -24,7 +24,14 @@ const getRecipe = {
   }),
 };
 
+const bulkRecipes = {
+  body: Joi.object().keys({
+    recipes: Joi.array().required(),
+  }),
+};
+
 module.exports= {
   createRecipe,
   getRecipe,
+  bulkRecipes,
 };

@@ -26,3 +26,15 @@ exports.getRecipe = catchAsync(async (req, res) => {
   }
   return res.send(recipe);
 });
+
+exports.bulkRecipes = catchAsync(async (req, res, next) => {
+  try {
+    logger.info('Attempting to bulk add sample recipes...');
+    const bulkAdd = await recipeService.bulkAddRecipes(req.body);
+    return res.send(bulkAdd);
+  } catch (err) {
+    logger.error('Error attempting to create bulk add recipes');
+    logger.info(err);
+    return next(err);
+  }
+})
