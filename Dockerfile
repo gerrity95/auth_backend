@@ -22,17 +22,17 @@ RUN npm install
 
 COPY --chown=node:node . .
 
-COPY --chown=node:node ./src ./src
-
-
-FROM node:14-alpine as main
-
-WORKDIR /home/node/app
-
-COPY --chown=node:node --from=build /home/node/app .
-
-COPY --chown=node:node --from=build /home/node/app .
-
 EXPOSE 8080
+
+
+# FROM node:14-alpine as main
+
+# WORKDIR /home/node/app
+
+# COPY --chown=node:node --from=build /home/node/app .
+
+# COPY --chown=node:node --from=build /home/node/app .
+
+# EXPOSE 8080
 
 #CMD ["pm2-runtime", "process.yml"]
