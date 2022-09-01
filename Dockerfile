@@ -20,7 +20,9 @@ USER node
 
 RUN npm install
 
-COPY --chown=node:node ./* .
+COPY --chown=node:node . .
+
+COPY --chown=node:node ./src ./src
 
 
 FROM node:14-alpine as main
