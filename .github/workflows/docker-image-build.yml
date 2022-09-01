@@ -24,4 +24,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: v1, latest
+        tags: gerrity95/plannr:latest
