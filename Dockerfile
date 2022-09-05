@@ -22,9 +22,14 @@ RUN npm install
 
 COPY --chown=node:node . .
 
+EXPOSE 8080
+
+
 FROM node:14-alpine as main
 
 WORKDIR /home/node/app
+
+COPY --chown=node:node --from=build /home/node/app .
 
 COPY --chown=node:node --from=build /home/node/app .
 
