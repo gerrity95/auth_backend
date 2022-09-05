@@ -2,9 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const db = require('./config/db.config');
+const {errorConverter, errorHandler} = require('./middleware/error');
 db.connection;
-const authRouter = require('./routes/auth.routes');
-const userRouter = require('./routes/user.routes');
+const routes = require('./routes');
 require('dotenv').config();
 
 const corsOptions = {
@@ -17,12 +17,14 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 // simple route
 
-app.use('/', authRouter.router);
-app.use('/', userRouter.router);
+app.use('/api', routes);
 
-app.get('/', (req, res) => {
-  res.json({message: 'Welcome to Auth application.'});
-});
+// convert error to ApiError, if needed
+app.use(errorConverter);
+
+// handle error
+app.use(errorHandler);
+
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
