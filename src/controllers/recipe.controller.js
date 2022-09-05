@@ -18,6 +18,15 @@ exports.createRecipe = async function(req, res, next) {
   }
 };
 
+exports.getSampleRecipes = catchAsync(async (req, res) => {
+  logger.info('Attempting to gather a number of random sample recipes');
+  const recipes = await recipeService.getSampleRecipes(req.params.count);
+  if (!recipes) {
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to get sample recipes');
+  }
+  return res.send(recipes);
+});
+
 exports.getRecipe = catchAsync(async (req, res) => {
   logger.info('Attempting to get recipe...');
   const recipe = await recipeService.getRecipeById(req.params.recipeId);

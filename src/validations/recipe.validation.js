@@ -24,6 +24,12 @@ const getRecipe = {
   }),
 };
 
+const sampleRecipes = {
+  params: Joi.object().keys({
+    count: Joi.number().required(),
+  }),
+};
+
 const bulkRecipes = {
   body: Joi.object().keys({
     recipes: Joi.array().required(),
@@ -33,5 +39,6 @@ const bulkRecipes = {
 module.exports= {
   createRecipe,
   getRecipe,
+  sampleRecipes,
   bulkRecipes,
 };

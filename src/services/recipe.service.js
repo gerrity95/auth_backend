@@ -42,6 +42,17 @@ async function getRecipeById(recipeId) {
   return await Recipe.findById(recipeId);
 }
 
+async function getSampleRecipes(count) {
+  try {
+    const sample = await Recipe.aggregate([{$sample: {size: count}}]);
+    return sample;
+  } catch (err) {
+    logger.error('Error attempting to get sample recipes');
+    logger.error(err);
+    throw err;
+  }
+}
+
 async function bulkAddRecipes(body) {
   const recipes = body.recipes;
   const validCategories = await validateCategories(recipes);
@@ -58,5 +69,6 @@ async function bulkAddRecipes(body) {
 module.exports= {
   createRecipe,
   getRecipeById,
+  getSampleRecipes,
   bulkAddRecipes,
 };
