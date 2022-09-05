@@ -7,6 +7,8 @@ const Role = db.role;
 const RefreshToken = db.refreshToken;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const ApiError = require('../utils/ApiError');
+const httpStatus = require('http-status');
 
 async function signUp(req) {
   try {
@@ -27,11 +29,11 @@ async function signUp(req) {
       expiresIn: config.jwtExpiration,
     });
     const refreshToken = await RefreshToken.createToken(user);
-    return {status: 200, data: {
+    return {
       id: newUser._id,
       accessToken: token,
       refreshToken: refreshToken,
-    }};
+    };
   } catch (err) {
     logger.error('Error attempting to Create User');
     logger.error(err);
@@ -44,7 +46,7 @@ async function signIn(req) {
     const user = await User.findOne({username: req.body.username.toLowerCase()});
     if (!user) {
       logger.info('Username not found.');
-      return {status: 404, data: {message: 'Uset Not Found'}};
+      throw new ApiError(httpStatus.NOT_FOUND, 'User Not Found');
     }
     const passwordIsValid = bcrypt.compareSync(
         req.body.password,
@@ -58,13 +60,13 @@ async function signIn(req) {
       expiresIn: config.jwtExpiration, // 24 hours
     });
     const refreshToken = await RefreshToken.createToken(user);
-    return {status: 200, data: {
+    return {
       id: user._id,
       username: user.username,
       email: user.email,
       accessToken: token,
       refreshToken: refreshToken,
-    }};
+    };
   } catch (err) {
     console.log('Error attempting to sign in');
     console.log(err);
@@ -77,33 +79,31 @@ async function refreshToken(req) {
   const {refreshToken: requestToken} = req.body;
   if (requestToken == null) {
     logger.info('Refresh token missing from request body');
-    return {status: 403, data: {message: 'Refresh Token is required!'}};
+    throw new ApiError(httpStatus.FORBIDDEN, 'Refresh token is required!');
   }
+  const refreshToken = await RefreshToken.findOne({token: requestToken});
+  if (!refreshToken) {
+    logger.info('Token is not in the database');
+    throw new ApiError(httpStatus.FORBIDDEN, 'Refresh token is not in the database!');
+  }
+  if (RefreshToken.verifyExpiration(refreshToken)) {
+    RefreshToken.findByIdAndRemove(refreshToken._id, {useFindAndModify: false}).exec();
+    logger.info('Refresh token has expired...');
+    throw new ApiError(httpStatus.FORBIDDEN, 'Refresh token has expired. Plase make another login request');
+  }
+  const newAccessToken = jwt.sign({id: refreshToken.user._id}, config.secret, {
+    expiresIn: config.jwtExpiration,
+  });
   try {
-    const refreshToken = await RefreshToken.findOne({token: requestToken});
-    if (!refreshToken) {
-      logger.info('Token is not in the database');
-      return {status: 403, data: {message: 'Refresh token is not in database!'}};
-    }
-    if (RefreshToken.verifyExpiration(refreshToken)) {
-      RefreshToken.findByIdAndRemove(refreshToken._id, {useFindAndModify: false}).exec();
-      logger.info('Refresh token has expired...');
-      return {status: 403, data: {
-        message: 'Refresh token has expired. Plase make another login request'}};
-    }
-    const newAccessToken = jwt.sign({id: refreshToken.user._id}, config.secret, {
-      expiresIn: config.jwtExpiration,
-    });
     const updatedRefreshToken = await authHelper.updateRefreshExpiry(requestToken);
-
-    return {status: 200, data: {
+    return {
       accessToken: newAccessToken,
       refreshToken: updatedRefreshToken.token,
-    }};
+    };
   } catch (err) {
     logger.error('Error attempting to refresh token.');
     logger.error(err);
-    return {status: 500, data: {message: err}};
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, err);
   }
 }
 

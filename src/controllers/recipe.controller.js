@@ -22,7 +22,7 @@ exports.getRecipe = catchAsync(async (req, res) => {
   logger.info('Attempting to get recipe...');
   const recipe = await recipeService.getRecipeById(req.params.recipeId);
   if (!recipe) {
-    throw new ApiError(404, 'Recipe not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Recipe not found');
   }
   return res.send(recipe);
 });
@@ -37,4 +37,4 @@ exports.bulkRecipes = catchAsync(async (req, res, next) => {
     logger.info(err);
     return next(err);
   }
-})
+});

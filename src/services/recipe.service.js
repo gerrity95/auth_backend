@@ -4,7 +4,7 @@ const db = require('../models/index');
 const Recipe = db.recipe;
 const Category = db.category;
 const ApiError = require('../utils/ApiError');
-const { validateCategories } = require('../utils/recipe.helper');
+const {validateCategories} = require('../utils/recipe.helper');
 
 async function createRecipe(req) {
   const categoryId = await Category.findOne({name: req.body.category});
