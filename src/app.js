@@ -10,6 +10,10 @@ require('dotenv').config();
 const corsOptions = {
   origin: 'http://localhost:8081',
 };
+
+// Expose Images
+app.use(express.static('public'));
+
 app.use(cors(corsOptions));
 // parse requests of content-type - application/json
 app.use(express.json());
