@@ -3,7 +3,7 @@ version: '3'
 services:
 
   nodejs:
-    image: auth_backend:0.0.1
+    #image: auth_backend:0.0.1
     build:
       context: .
       dockerfile: Dockerfile

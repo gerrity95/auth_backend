@@ -1,7 +1,5 @@
-const logger = require('../middleware/logger');
 const httpStatus = require('http-status');
 const db = require('../models/index');
-const Recipe = db.recipe;
 const Category = db.category;
 const ApiError = require('../utils/ApiError');
 
@@ -25,6 +23,11 @@ async function validateCategories(recipeBody) {
   return true;
 };
 
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
 module.exports= {
   validateCategories,
+  getRandomInt,
 };
