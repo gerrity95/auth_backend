@@ -15,7 +15,8 @@ const controller = require('../controllers/recipe.controller');
 
 // GET REQUESTS
 router.get('/:recipeId', [validate(validation.getRecipe)], controller.getRecipe);
-router.get('/sampleRecipes/:count', [validate(validation.sampleRecipes)], controller.getSampleRecipes);
+router.get('/sampleRecipes/:count', [validate(validation.sampleRecipes)],
+    controller.getSampleRecipes);
 
 // POST REQUESTS
 // router.post('/api/auth/recipe', [authJwt.verifyToken, validation.createRecipe], controller.createRecipe);

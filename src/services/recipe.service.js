@@ -4,24 +4,31 @@ const db = require('../models/index');
 const Recipe = db.recipe;
 const Category = db.category;
 const ApiError = require('../utils/ApiError');
-const {validateCategories} = require('../utils/recipe.helper');
+const {validateCategories, getRandomInt} = require('../utils/recipe.helper');
 
 async function createRecipe(req) {
   const categoryId = await Category.findOne({name: req.body.category});
   if (!categoryId) {
+    logger.error(`Invalid Category: ${req.body.category} submitted with recipe.`);
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid Category submitted');
+  }
+  let imagePath;
+  if (typeof req.body.image === 'undefined') {
+    imagePath = generatePlaceholderImage();
+  } else {
+    imagePath = req.body.image;
   }
   try {
     const recipeBody = {
       name: req.body.name,
       description: req.body.description,
       category: [categoryId.name],
+      image: imagePath,
       ingredients: req.body.ingredients,
       ...(typeof req.body.is_sample != 'undefined') && {is_sample: req.body.is_sample},
       ...(typeof req.body.servings != 'undefined') && {servings: req.body.servings},
       ...(typeof req.body.cooking_time != 'undefined') && {cooking_time: req.body.cooking_time},
       ...(typeof req.body.website != 'undefined') && {website: req.body.website},
-      ...(typeof req.body.image != 'undefined') && {image: req.body.image},
       ...(typeof req.body.tags != 'undefined') && {tags: req.body.tags},
       ...(typeof req.body.prep_instructions != 'undefined') && {prep_instructions: req.body.prep_instructions},
       ...(typeof req.body.cooking_instructions != 'undefined') && {cooking_instructions: req.body.cooking_instructions},
@@ -29,6 +36,7 @@ async function createRecipe(req) {
 
     const recipe = new Recipe(recipeBody);
     const newRecipe = await recipe.save();
+    logger.info('Successfully added new recipe!');
     return {id: newRecipe._id};
   } catch (err) {
     logger.error('Error attempting to Create New Recipe');
@@ -64,6 +72,12 @@ async function bulkAddRecipes(body) {
 
   return bulkAdd;
 }
+
+const generatePlaceholderImage = () => {
+  // Function to generate the path to one of our placeholder images if no image is provided
+  const randomNumber = getRandomInt(14);
+  return `placeholders/temp${randomNumber}.jpg`;
+};
 
 
 module.exports= {
