@@ -15,6 +15,7 @@ const createRecipe = {
     ingredients: Joi.array().required(),
     prep_instructions: Joi.array(),
     cooking_instructions: Joi.array(),
+    user_id: Joi.string(),
   }),
 };
 
