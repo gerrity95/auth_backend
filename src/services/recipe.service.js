@@ -32,7 +32,7 @@ async function createRecipe(req) {
       ...(typeof req.body.tags != 'undefined') && {tags: req.body.tags},
       ...(typeof req.body.prep_instructions != 'undefined') && {prep_instructions: req.body.prep_instructions},
       ...(typeof req.body.cooking_instructions != 'undefined') && {cooking_instructions: req.body.cooking_instructions},
-      ...(typeof req.body.user_id != 'undefined') && {tags: req.body.user_id},
+      ...(typeof req.body.user_id != 'undefined') && {user_id: req.body.user_id},
     };
 
     const recipe = new Recipe(recipeBody);
