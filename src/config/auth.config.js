@@ -4,6 +4,6 @@ const {
 
 module.exports = {
   secret: JWT_SECRET_TOKEN,
-  jwtExpiration: 60, // 1 hour
+  jwtExpiration: 600, // 1 hour
   jwtRefreshExpiration: 1800, // 24 hours
 };
