@@ -20,8 +20,9 @@ const createRecipe = {
 };
 
 const getRecipe = {
-  params: Joi.object().keys({
+  query: Joi.object().keys({
     recipeId: Joi.string().custom(objectId),
+    userId: Joi.string().custom(objectId),
   }),
 };
 

@@ -5,18 +5,11 @@ const catchAsync = require('../utils/catchAsync');
 const httpStatus = require('http-status');
 
 
-exports.createRecipe = async function(req, res, next) {
-  /* Some reason not working whene extracted to a new function need to figure it out */
-  try {
-    logger.info('Attempting to create new recipe...');
-    const recipeDetails = await recipeService.createRecipe(req);
-    return res.send(recipeDetails);
-  } catch (err) {
-    logger.error('Error attempting to create new recipe');
-    logger.info(err);
-    return next(err);
-  }
-};
+exports.createRecipe = catchAsync(async (req, res) => {
+  logger.info('Attempting to create new recipe...');
+  const recipeDetails = await recipeService.createRecipe(req);
+  return res.send(recipeDetails);
+});
 
 exports.getSampleRecipes = catchAsync(async (req, res) => {
   logger.info('Attempting to gather a number of random sample recipes');
@@ -29,7 +22,7 @@ exports.getSampleRecipes = catchAsync(async (req, res) => {
 
 exports.getRecipe = catchAsync(async (req, res) => {
   logger.info('Attempting to get recipe...');
-  const recipe = await recipeService.getRecipeById(req.params.recipeId);
+  const recipe = await recipeService.getRecipe(req.query);
   if (!recipe) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Recipe not found');
   }

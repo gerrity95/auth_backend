@@ -51,6 +51,19 @@ async function getRecipeById(recipeId) {
   return await Recipe.findById(recipeId);
 }
 
+async function getRecipe(query) {
+  const queryBody = {
+    ...(typeof query.recipeId != 'undefined') && {_id: query.recipeId},
+    ...(typeof query.userId != 'undefined') && {user_id: query.userId},
+  };
+  const recipes = await Recipe.find(queryBody);
+  if (!recipes || !recipes.length) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Unable to find any recipes.');
+  }
+  logger.info(`Success gathering recipe(s) using recipe: ${query.recipeId}, user ${query.userId}`);
+  return recipes;
+}
+
 async function getSampleRecipes(count) {
   try {
     const sample = await Recipe.aggregate([{$sample: {size: count}}]);
@@ -84,6 +97,7 @@ const generatePlaceholderImage = () => {
 module.exports= {
   createRecipe,
   getRecipeById,
+  getRecipe,
   getSampleRecipes,
   bulkAddRecipes,
 };
