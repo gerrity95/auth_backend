@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
     name: 'Authentication Backend Template',
-    script: './src/app.js',
+    script: './src/index.js',
     watch: true,
     ignore_watch: ['logs/server.log', 'node_modules', 'logs'],
     time: true,
