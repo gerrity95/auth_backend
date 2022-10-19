@@ -1,10 +1,10 @@
 const express = require('express');
+const ApiError = require('./utils/ApiError');
 const cors = require('cors');
 const app = express();
-const db = require('./config/db.config');
 const {errorConverter, errorHandler} = require('./middleware/error');
-db.connection;
 const routes = require('./routes');
+const httpStatus = require('http-status');
 require('dotenv').config();
 
 const corsOptions = {
@@ -23,15 +23,14 @@ app.use(express.urlencoded({extended: true}));
 
 app.use('/api', routes);
 
+app.use((req, res, next) => {
+  next(new ApiError(httpStatus.NOT_FOUND, 'Not Found'));
+})
+
 // convert error to ApiError, if needed
 app.use(errorConverter);
 
 // handle error
 app.use(errorHandler);
 
-// set port, listen for requests
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
-});
-
+module.exports = app;

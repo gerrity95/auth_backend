@@ -2,7 +2,7 @@
   "name": "auth_backend",
   "version": "1.0.0",
   "description": "Template for JWT authenticated backend",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
