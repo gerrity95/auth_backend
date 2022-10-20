@@ -23,9 +23,9 @@ app.use(express.urlencoded({extended: true}));
 
 app.use('/api', routes);
 
-app.use((req, res, next) => {
-  next(new ApiError(httpStatus.NOT_FOUND, 'Not Found'));
-})
+// app.use((req, res, next) => {
+//   next(new ApiError(httpStatus.NOT_FOUND, 'Not Found'));
+// });
 
 // convert error to ApiError, if needed
 app.use(errorConverter);

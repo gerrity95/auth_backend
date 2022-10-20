@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models');
+const validate = require('../middleware/validate');
+const validation = require('../validations/recipe.validation');
+const controller = require('../controllers/recipe.controller');
 const Role = db.role;
 const Category = db.category;
 
@@ -69,5 +72,8 @@ router.post('/addCategories', async (req, res, next) => {
   });
   return res.send({'success': true});
 });
+
+// Temp endpoint for bulk adding sample recipes
+router.post('/bulkrecipes', [validate(validation.bulkRecipes)], controller.bulkRecipes);
 
 module.exports = router;

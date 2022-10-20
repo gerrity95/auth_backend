@@ -13,9 +13,7 @@ const httpStatus = require('http-status');
 async function signUp(req) {
   try {
     logger.info('Attempting to register a new user..');
-    console.log(req.body);
     const role = await Role.findOne({name: 'user'});
-    console.log(role);
     const user = new User({
       username: req.body.username.toLowerCase(),
       email: req.body.email,
