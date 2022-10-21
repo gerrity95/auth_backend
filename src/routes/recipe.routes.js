@@ -23,7 +23,4 @@ router
 router.get('/sampleRecipes/:count', [validate(validation.sampleRecipes)],
     controller.getSampleRecipes);
 
-// Temp endpoint for bulk adding sample recipes
-router.post('/bulkrecipes', [validate(validation.bulkRecipes)], controller.bulkRecipes);
-
 module.exports = router;
