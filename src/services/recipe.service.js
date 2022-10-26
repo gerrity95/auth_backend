@@ -54,8 +54,9 @@ async function getRecipeById(recipeId) {
 async function getRecipe(query) {
   const queryBody = {
     ...(typeof query.recipeId != 'undefined') && {_id: query.recipeId},
-    ...(typeof query.userId != 'undefined') && {user_id: query.userId},
+    ...(typeof query.userId != 'undefined') && {user_id: {$in: query.userId}},
   };
+  console.log(queryBody);
   const recipes = await Recipe.find(queryBody);
   if (!recipes || !recipes.length) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Unable to find any recipes.');
@@ -87,6 +88,25 @@ async function bulkAddRecipes(body) {
   return bulkAdd;
 }
 
+async function addUser(params, body) {
+  logger.info('Attempting to add user to the recipe...');
+  const update = await Recipe.updateOne(
+      {_id: params.recipeID},
+      {$addToSet: {user_id: body.user_id}});
+  console.log(update);
+  if (update.matchedCount === 0 && update.modifiedCount == 0) {
+    logger.info('Unable to find requested recipe.');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Unable to find recipe');
+  }
+  if (update.matchedCount === 1 && update.modifiedCount == 0) {
+    logger.info('Unable to find requested recipe.');
+    throw new ApiError(httpStatus.METHOD_NOT_ALLOWED, 'User is already part of recipe array');
+  }
+
+  logger.info('Successfully added user to the recipe');
+  return update;
+}
+
 const generatePlaceholderImage = () => {
   // Function to generate the path to one of our placeholder images if no image is provided
   const randomNumber = getRandomInt(14);
@@ -100,4 +120,5 @@ module.exports= {
   getRecipe,
   getSampleRecipes,
   bulkAddRecipes,
+  addUser,
 };

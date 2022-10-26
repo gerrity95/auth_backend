@@ -29,6 +29,15 @@ exports.getRecipe = catchAsync(async (req, res) => {
   return res.send(recipe);
 });
 
+exports.addUser = catchAsync(async (req, res) => {
+  logger.info('Attempting to add user to recipe...');
+  const recipe = await recipeService.addUser(req.params, req.body);
+  if (!recipe) {
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error attempting to add user to recipe');
+  }
+  return res.send(recipe);
+});
+
 exports.bulkRecipes = catchAsync(async (req, res, next) => {
   try {
     logger.info('Attempting to bulk add sample recipes...');

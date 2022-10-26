@@ -15,7 +15,8 @@ const createRecipe = {
     ingredients: Joi.array().required(),
     prep_instructions: Joi.array(),
     cooking_instructions: Joi.array(),
-    user_id: Joi.string(),
+    user_id: Joi.array(),
+    author: Joi.string(),
   }),
 };
 
@@ -38,7 +39,17 @@ const bulkRecipes = {
   }),
 };
 
+const addUser = {
+  params: Joi.object().keys({
+    recipeID: Joi.string().required().custom(objectId),
+  }),
+  body: Joi.object().keys({
+    user_id: Joi.string().custom(objectId).required(),
+  }),
+};
+
 module.exports= {
+  addUser,
   createRecipe,
   getRecipe,
   sampleRecipes,
