@@ -19,7 +19,8 @@ const Recipe = mongoose.model(
       ingredients: {type: Array, required: true},
       prep_instructions: {type: Array, required: false},
       cooking_instructions: {type: Array, required: false},
-      user_id: {type: String, required: false},
+      user_id: {type: Array, required: false},
+      author: {type: String, required: false},
     }),
 );
 module.exports = Recipe;

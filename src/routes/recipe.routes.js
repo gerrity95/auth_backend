@@ -20,7 +20,9 @@ router
     .get([authJwt.verifyToken, validate(validation.getRecipe)], controller.getRecipe)
     .post([authJwt.verifyToken, validate(validation.createRecipe)], controller.createRecipe);
 
-router.get('/sampleRecipes/:count', [validate(validation.sampleRecipes)],
+router.get('/sampleRecipes/:count', [authJwt.verifyToken, validate(validation.sampleRecipes)],
     controller.getSampleRecipes);
+
+router.put('/user/:recipeID', [validate(validation.addUser)], controller.addUser);
 
 module.exports = router;
