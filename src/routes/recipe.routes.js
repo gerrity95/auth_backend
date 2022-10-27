@@ -17,10 +17,10 @@ const controller = require('../controllers/recipe.controller');
 // Route REQUESTS
 router
     .route('/')
-    .get([validate(validation.getRecipe)], controller.getRecipe)
-    .post([validate(validation.createRecipe)], controller.createRecipe);
+    .get([authJwt.verifyToken, validate(validation.getRecipe)], controller.getRecipe)
+    .post([authJwt.verifyToken, validate(validation.createRecipe)], controller.createRecipe);
 
-router.get('/sampleRecipes/:count', [validate(validation.sampleRecipes)],
+router.get('/sampleRecipes/:count', [authJwt.verifyToken, validate(validation.sampleRecipes)],
     controller.getSampleRecipes);
 
 router.put('/user/:recipeID', [validate(validation.addUser)], controller.addUser);
