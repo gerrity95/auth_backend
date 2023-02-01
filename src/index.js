@@ -18,9 +18,15 @@ const options = {
   useNewUrlParser: true,
   connectTimeoutMS: 5000,
   serverSelectionTimeoutMS: 5000,
+  directConnection: true,
+  useUnifiedTopology: true,
 };
 
-const url = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?directConnection=true&authSource=${MONGO_DB}&replicaSet=replicaset&retryWrites=true`;
+// eslint-disable-next-line max-len
+const url = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?authSource=${MONGO_DB}&replicaSet=replicaset&retryWrites=true`;
+
+console.log(url);
+
 mongoose.connect(url, options).then( function() {
   logger.info('MongoDB is connected');
   app.listen(PORT, () => {

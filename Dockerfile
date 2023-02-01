@@ -1,10 +1,13 @@
-FROM node:14-alpine as build
+FROM node:18-alpine as build
 
-# RUN apk add g++ make py3-pip
+RUN apk add --update python3 make g++\
+  && rm -rf /var/cache/apk/*
 
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
 RUN mkdir -p /var/log/auth_backend && chown -R node:node /var/log/auth_backend
+
+USER node
 
 WORKDIR /home/node/app
 
@@ -16,6 +19,10 @@ COPY package*.json ./
 # RUN python3 -m ensurepip
 # RUN pip3 install --no-cache --upgrade pip setuptools
 
+USER root
+
+RUN chown -R node:node /home/node/app
+
 USER node
 
 RUN npm install
@@ -25,7 +32,7 @@ COPY --chown=node:node . .
 EXPOSE 8080
 
 
-FROM node:14-alpine as main
+FROM node:18-alpine as main
 
 WORKDIR /home/node/app
 

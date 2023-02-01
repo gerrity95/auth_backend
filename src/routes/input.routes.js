@@ -1,79 +1,83 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const db = require('../models');
-const validate = require('../middleware/validate');
-const validation = require('../validations/recipe.validation');
-const controller = require('../controllers/recipe.controller');
+const db = require("../database/models");
+const validate = require("../middleware/validate");
+const validation = require("../validations/recipe.validation");
+const controller = require("../controllers/recipe.controller");
 const Role = db.role;
 const Category = db.category;
 
 module.exports = router;
 
-router.post('/addRoles', async (req, res, next) => {
+router.post("/addRoles", async (req, res, next) => {
   new Role({
-    name: 'user',
+    name: "user",
   }).save((err) => {
     if (err) {
-      console.log('error', err);
+      console.log("error", err);
     }
-    console.log('added \'user\' to roles collection');
+    console.log("added 'user' to roles collection");
   });
   new Role({
-    name: 'moderator',
+    name: "moderator",
   }).save((err) => {
     if (err) {
-      console.log('error', err);
+      console.log("error", err);
     }
-    console.log('added \'moderator\' to roles collection');
+    console.log("added 'moderator' to roles collection");
   });
   new Role({
-    name: 'admin',
+    name: "admin",
   }).save((err) => {
     if (err) {
-      console.log('error', err);
+      console.log("error", err);
     }
-    console.log('added \'admin\' to roles collection');
+    console.log("added 'admin' to roles collection");
   });
-  return res.send({'success': true});
+  return res.send({ success: true });
 });
 
-router.post('/addCategories', async (req, res, next) => {
+router.post("/addCategories", async (req, res, next) => {
   new Category({
-    name: 'breakfast',
+    name: "breakfast",
   }).save((err) => {
     if (err) {
-      console.log('error', err);
+      console.log("error", err);
     }
-    console.log('added \'breakfast\' to category collection');
+    console.log("added 'breakfast' to category collection");
   });
   new Category({
-    name: 'lunch',
+    name: "lunch",
   }).save((err) => {
     if (err) {
-      console.log('error', err);
+      console.log("error", err);
     }
-    console.log('added \'lunch\' to category collection');
+    console.log("added 'lunch' to category collection");
   });
   new Category({
-    name: 'dinner',
+    name: "dinner",
   }).save((err) => {
     if (err) {
-      console.log('error', err);
+      console.log("error", err);
     }
-    console.log('added \'dinner\' to category collection');
+    console.log("added 'dinner' to category collection");
   });
   new Category({
-    name: 'snacks',
+    name: "snacks",
   }).save((err) => {
     if (err) {
-      console.log('error', err);
+      console.log("error", err);
     }
-    console.log('added \'snacks\' to category collection');
+    console.log("added 'snacks' to category collection");
   });
-  return res.send({'success': true});
+  return res.send({ success: true });
 });
 
 // Temp endpoint for bulk adding sample recipes
-router.post('/bulkrecipes', [validate(validation.bulkRecipes)], controller.bulkRecipes);
+router.post(
+  "/bulkrecipes",
+  [validate(validation.bulkRecipes)],
+  controller.bulkRecipes
+);
 
 module.exports = router;
