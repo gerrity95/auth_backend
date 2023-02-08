@@ -7,7 +7,7 @@ const createRecipe = {
     description: Joi.string().required(),
     category: Joi.string().required(),
     is_sample: Joi.bool(),
-    servings: Joi.number(),
+    servings: Joi.string(),
     cooking_time: Joi.string(),
     website: Joi.string(),
     image: Joi.string(),

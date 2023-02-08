@@ -1,21 +1,20 @@
-const logger = require("../middleware/logger");
-const httpStatus = require("http-status");
-const db = require("../database/models/index");
+const logger = require('../middleware/logger');
+const httpStatus = require('http-status');
+const db = require('../database/models/index');
 const Recipe = db.recipe;
 const Category = db.category;
-const ApiError = require("../utils/ApiError");
-const { validateCategories, getRandomInt } = require("../utils/recipe.helper");
+const ApiError = require('../utils/ApiError');
+const {validateCategories, getRandomInt} = require('../utils/recipe.helper');
 
 async function createRecipe(req) {
-  const categoryId = await Category.findOne({ name: req.body.category });
+  console.log(req.body);
+  const categoryId = await Category.findOne({name: req.body.category});
   if (!categoryId) {
-    logger.error(
-      `Invalid Category: ${req.body.category} submitted with recipe.`
-    );
-    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Category submitted");
+    logger.error(`Invalid Category: ${req.body.category} submitted with recipe.`);
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid Category submitted');
   }
   let imagePath;
-  if (typeof req.body.image === "undefined") {
+  if (typeof req.body.image === 'undefined') {
     imagePath = generatePlaceholderImage();
   } else {
     imagePath = req.body.image;
@@ -27,41 +26,41 @@ async function createRecipe(req) {
       category: [categoryId.name],
       image: imagePath,
       ingredients: req.body.ingredients,
-      ...(typeof req.body.is_sample != "undefined" && {
+      ...(typeof req.body.is_sample != 'undefined' && {
         is_sample: req.body.is_sample,
       }),
-      ...(typeof req.body.servings != "undefined" && {
+      ...(typeof req.body.servings != 'undefined' && {
         servings: req.body.servings,
       }),
-      ...(typeof req.body.cooking_time != "undefined" && {
+      ...(typeof req.body.cooking_time != 'undefined' && {
         cooking_time: req.body.cooking_time,
       }),
-      ...(typeof req.body.website != "undefined" && {
+      ...(typeof req.body.website != 'undefined' && {
         website: req.body.website,
       }),
-      ...(typeof req.body.tags != "undefined" && { tags: req.body.tags }),
-      ...(typeof req.body.prep_instructions != "undefined" && {
+      ...(typeof req.body.tags != 'undefined' && {tags: req.body.tags}),
+      ...(typeof req.body.prep_instructions != 'undefined' && {
         prep_instructions: req.body.prep_instructions,
       }),
-      ...(typeof req.body.cooking_instructions != "undefined" && {
+      ...(typeof req.body.cooking_instructions != 'undefined' && {
         cooking_instructions: req.body.cooking_instructions,
       }),
-      ...(typeof req.body.user_id != "undefined" && {
+      ...(typeof req.body.user_id != 'undefined' && {
         user_id: req.body.user_id,
       }),
     };
 
     const recipe = new Recipe(recipeBody);
     const newRecipe = await recipe.save();
-    logger.info("Successfully added new recipe!");
-    return { id: newRecipe._id };
+    logger.info('Successfully added new recipe!');
+    return {id: newRecipe._id};
   } catch (err) {
-    logger.error("Error attempting to Create New Recipe");
+    logger.error('Error attempting to Create New Recipe');
     logger.error(err);
     console.log(err);
     throw new ApiError(
-      httpStatus.INTERNAL_SERVER_ERROR,
-      "Error attempting to create recipe"
+        httpStatus.INTERNAL_SERVER_ERROR,
+        'Error attempting to create recipe',
     );
   }
 }
@@ -72,28 +71,28 @@ async function getRecipeById(recipeId) {
 
 async function getRecipe(query) {
   const queryBody = {
-    ...(typeof query.recipeId != "undefined" && { _id: query.recipeId }),
-    ...(typeof query.userId != "undefined" && {
-      user_id: { $in: query.userId },
+    ...(typeof query.recipeId != 'undefined' && {_id: query.recipeId}),
+    ...(typeof query.userId != 'undefined' && {
+      user_id: {$in: query.userId},
     }),
   };
   console.log(queryBody);
   const recipes = await Recipe.find(queryBody);
   if (!recipes || !recipes.length) {
-    throw new ApiError(httpStatus.NOT_FOUND, "Unable to find any recipes.");
+    throw new ApiError(httpStatus.NOT_FOUND, 'Unable to find any recipes.');
   }
   logger.info(
-    `Success gathering recipe(s) using recipe: ${query.recipeId}, user ${query.userId}`
+      `Success gathering recipe(s) using recipe: ${query.recipeId}, user ${query.userId}`
   );
   return recipes;
 }
 
 async function getSampleRecipes(count) {
   try {
-    const sample = await Recipe.aggregate([{ $sample: { size: count } }]);
+    const sample = await Recipe.aggregate([{$sample: {size: count}}]);
     return sample;
   } catch (err) {
-    logger.error("Error attempting to get sample recipes");
+    logger.error('Error attempting to get sample recipes');
     logger.error(err);
     throw err;
   }
@@ -104,8 +103,8 @@ async function bulkAddRecipes(body) {
   const validCategories = await validateCategories(recipes);
   if (!validCategories) {
     throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      "Invalid categories passed in recipe body."
+        httpStatus.BAD_REQUEST,
+        'Invalid categories passed in recipe body.'
     );
   }
   const bulkAdd = await Recipe.insertMany(recipes);
@@ -115,25 +114,25 @@ async function bulkAddRecipes(body) {
 }
 
 async function addUser(params, body) {
-  logger.info("Attempting to add user to the recipe...");
+  logger.info('Attempting to add user to the recipe...');
   const update = await Recipe.updateOne(
-    { _id: params.recipeID },
-    { $addToSet: { user_id: body.user_id } }
+      {_id: params.recipeID},
+      {$addToSet: {user_id: body.user_id}}
   );
   console.log(update);
   if (update.matchedCount === 0 && update.modifiedCount == 0) {
-    logger.info("Unable to find requested recipe.");
-    throw new ApiError(httpStatus.BAD_REQUEST, "Unable to find recipe");
+    logger.info('Unable to find requested recipe.');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Unable to find recipe');
   }
   if (update.matchedCount === 1 && update.modifiedCount == 0) {
-    logger.info("Unable to find requested recipe.");
+    logger.info('Unable to find requested recipe.');
     throw new ApiError(
-      httpStatus.METHOD_NOT_ALLOWED,
-      "User is already part of recipe array"
+        httpStatus.METHOD_NOT_ALLOWED,
+        'User is already part of recipe array'
     );
   }
 
-  logger.info("Successfully added user to the recipe");
+  logger.info('Successfully added user to the recipe');
   return update;
 }
 

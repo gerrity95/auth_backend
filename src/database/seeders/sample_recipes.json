@@ -6,7 +6,7 @@
         "servings": 4,
         "cooking_time": "90 Minutes",
         "is_sample": true,
-        "image": "/path/to/fake/image",
+        "image": "tacos.jpg",
         "tags": [
             "Dinner",
             "Meal Prep"
@@ -92,7 +92,7 @@
         "servings": 4,
         "cooking_time": "90 Minutes",
         "is_sample": true,
-        "image": "/path/to/fake/image",
+        "image": "meatballs.jpg",
         "tags": [
             "Dinner",
             "Meal Prep"
@@ -174,7 +174,7 @@
         "servings": 6,
         "cooking_time": "120 Minutes",
         "is_sample": true,
-        "image": "/path/to/fake/image",
+        "image": "beef_chilli.jpg",
         "tags": [
             "Dinner",
             "Meal Prep",
@@ -262,7 +262,7 @@
         "servings": 4,
         "cooking_time": "30 Minutes",
         "is_sample": true,
-        "image": "/path/to/fake/image",
+        "image": "chickpea_egg_wrap.jpg",
         "tags": [
             "Lunch",
             "Wraps & Sandwiches",
@@ -328,7 +328,7 @@
         ],
         "cooking_time": "20 Minutes",
         "is_sample": true,
-        "image": "/path/to/fake/image",
+        "image": "breakfast_burrito.jpg",
         "tags": [
             "Lunch",
             "Wraps & Sandwiches",
@@ -384,7 +384,7 @@
         "category": "dinner",
         "cooking_time": "60 Minutes",
         "is_sample": true,
-        "image": "/path/to/fake/image",
+        "image": "chickpea_burger.jpg",
         "tags": [
             "Dinner",
             "Vegetarian"
@@ -460,7 +460,7 @@
         "category": "dinner",
         "cooking_time": "70 Minutes",
         "is_sample": true,
-        "image": "/path/to/fake/image",
+        "image": "beef_burger.jpg",
         "tags": [
             "Dinner",
             "For Sharing"
@@ -542,7 +542,7 @@
         "category": "breakfast",
         "cooking_time": "5",
         "is_sample": true,
-        "image": "/path/to/fake/image",
+        "image": "overnight_oats.jpg",
         "tags": [
             "Breakfast",
             "Vegetarian"

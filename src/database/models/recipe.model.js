@@ -11,7 +11,7 @@ const Recipe = mongoose.model(
           ref: 'Category',
         },
       ],
-      servings: {type: Number, required: false},
+      servings: {type: String, required: false},
       cooking_time: {type: String, required: false},
       website: {type: String, required: false},
       image: {type: String, required: false},
