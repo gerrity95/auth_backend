@@ -11,6 +11,12 @@ exports.createRecipe = catchAsync(async (req, res) => {
   return res.send(recipeDetails);
 });
 
+exports.addRecipeLink = catchAsync(async (req, res) => {
+  logger.info('Attempting to add new recipe link...');
+  const recipeDetails = await recipeService.addRecipeLink(req);
+  return res.send(recipeDetails);
+});
+
 exports.getSampleRecipes = catchAsync(async (req, res) => {
   logger.info('Attempting to gather a number of random sample recipes');
   const recipes = await recipeService.getSampleRecipes(req.params.count);

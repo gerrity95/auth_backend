@@ -65,6 +65,18 @@ async function createRecipe(req) {
   }
 }
 
+async function addRecipeLink(req) {
+  `
+  Check if the recipe link already exists
+    If yes:
+      Append user id  to the user array
+      Append tags to the recipe that aren't already there 
+    if not:
+      Create new entry in the DB
+  `
+  return true;
+}
+
 async function getRecipeById(recipeId) {
   return await Recipe.findById(recipeId);
 }
@@ -144,6 +156,7 @@ const generatePlaceholderImage = () => {
 
 module.exports = {
   createRecipe,
+  addRecipeLink,
   getRecipeById,
   getRecipe,
   getSampleRecipes,

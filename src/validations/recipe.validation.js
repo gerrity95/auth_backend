@@ -20,6 +20,18 @@ const createRecipe = {
   }),
 };
 
+const addRecipeLink = {
+  body: Joi.object().keys({
+    name: Joi.string().required(),
+    category: Joi.string().required(),
+    website: Joi.string().uri().required(),
+    image: Joi.string(),
+    tags: Joi.array(),
+    user_id: Joi.array(),
+    author: Joi.string(),
+  }),
+};
+
 const getRecipe = {
   query: Joi.object().keys({
     recipeId: Joi.string().custom(objectId),
@@ -51,6 +63,7 @@ const addUser = {
 module.exports= {
   addUser,
   createRecipe,
+  addRecipeLink,
   getRecipe,
   sampleRecipes,
   bulkRecipes,
