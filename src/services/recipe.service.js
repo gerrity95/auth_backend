@@ -2,6 +2,7 @@ const logger = require('../middleware/logger');
 const httpStatus = require('http-status');
 const db = require('../database/models/index');
 const Recipe = db.recipe;
+const RecipeLink = db.recipeLink;
 const Category = db.category;
 const ApiError = require('../utils/ApiError');
 const {validateCategories, getRandomInt} = require('../utils/recipe.helper');
@@ -66,22 +67,28 @@ async function createRecipe(req) {
 }
 
 async function addRecipeLink(req) {
-  `
-  Check if the recipe link already exists
-    If yes:
-      Append user id  to the user array
-      Append tags to the recipe that aren't already there 
-    if not:
-      Create new entry in the DB
-  `
-  return true;
+  // Function to add a recipe link to the DB
+  const isExisting = await RecipeLink.findOne({website: req.body.website});
+  if (isExisting) {
+    logger.info(isExisting);
+    logger.info('Entry for recipe link already exists. Appending user ID to user array.');
+    const update = await RecipeLink.updateOne(
+        {_id: isExisting._id},
+        {$addToSet: {user_id: {$each: req.body.user_id}, tags: {$each: req.body.tags}}},
+    );
+    return update;
+  }
+  logger.info('Adding newly created recipe link');
+  const newRecipeLink = new RecipeLink(req.body);
+  const recipeLink = await newRecipeLink.save();
+  return recipeLink;
 }
 
 async function getRecipeById(recipeId) {
   return await Recipe.findById(recipeId);
 }
 
-async function getRecipe(query) {
+async function recipeRequest(query, requestType) {
   const queryBody = {
     ...(typeof query.recipeId != 'undefined' && {_id: query.recipeId}),
     ...(typeof query.userId != 'undefined' && {
@@ -89,13 +96,19 @@ async function getRecipe(query) {
     }),
   };
   console.log(queryBody);
-  const recipes = await Recipe.find(queryBody);
+  let recipes;
+  if (requestType === 'recipes') {
+    recipes = await Recipe.find(queryBody);
+  } else if (requestType === 'recipeLinks') {
+    recipes = await RecipeLink.find(queryBody);
+  } else {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid request to get recipes');
+  }
+
   if (!recipes || !recipes.length) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Unable to find any recipes.');
   }
-  logger.info(
-      `Success gathering recipe(s) using recipe: ${query.recipeId}, user ${query.userId}`
-  );
+  logger.info(`Success gathering recipe(s) using recipe: ${query.recipeId}, user ${query.userId}`);
   return recipes;
 }
 
@@ -129,7 +142,7 @@ async function addUser(params, body) {
   logger.info('Attempting to add user to the recipe...');
   const update = await Recipe.updateOne(
       {_id: params.recipeID},
-      {$addToSet: {user_id: body.user_id}}
+      {$addToSet: {user_id: body.user_id}},
   );
   console.log(update);
   if (update.matchedCount === 0 && update.modifiedCount == 0) {
@@ -158,7 +171,7 @@ module.exports = {
   createRecipe,
   addRecipeLink,
   getRecipeById,
-  getRecipe,
+  recipeRequest,
   getSampleRecipes,
   bulkAddRecipes,
   addUser,

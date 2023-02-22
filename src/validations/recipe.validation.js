@@ -39,6 +39,13 @@ const getRecipe = {
   }),
 };
 
+const getRecipeLink = {
+  query: Joi.object().keys({
+    recipeId: Joi.string().custom(objectId),
+    userId: Joi.string().custom(objectId),
+  }),
+};
+
 const sampleRecipes = {
   params: Joi.object().keys({
     count: Joi.number().required(),
@@ -64,6 +71,7 @@ module.exports= {
   addUser,
   createRecipe,
   addRecipeLink,
+  getRecipeLink,
   getRecipe,
   sampleRecipes,
   bulkRecipes,

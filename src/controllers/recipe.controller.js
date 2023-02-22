@@ -28,10 +28,19 @@ exports.getSampleRecipes = catchAsync(async (req, res) => {
 
 exports.getRecipe = catchAsync(async (req, res) => {
   logger.info('Attempting to get recipe...');
-  const recipe = await recipeService.getRecipe(req.query);
-  if (!recipe) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Recipe not found');
-  }
+  const recipe = await recipeService.recipeRequest(req.query, 'recipes');
+  // if (!recipe) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'Recipe not found');
+  // }
+  return res.send(recipe);
+});
+
+exports.getRecipeLink = catchAsync(async (req, res) => {
+  logger.info('Attempting to get recipe links...');
+  const recipe = await recipeService.recipeRequest(req.query, 'recipeLinks');
+  // if (!recipe) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'Recipe link not found');
+  // }
   return res.send(recipe);
 });
 

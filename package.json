@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "./node_modules/.bin/pm2-runtime start ecosystem.config.js",
+    "dev": "./node_modules/.bin/pm2-runtime start ecosystem.config.js",
     "seed": "node ./src/database/seeders/index.js"
   },
   "repository": {
