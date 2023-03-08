@@ -104,8 +104,8 @@ async function recipeRequest(query, requestType) {
   } else {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid request to get recipes');
   }
-
-  if (!recipes || !recipes.length) {
+  console.log(recipes);
+  if (!recipes) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Unable to find any recipes.');
   }
   logger.info(`Success gathering recipe(s) using recipe: ${query.recipeId}, user ${query.userId}`);
