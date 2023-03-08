@@ -11,6 +11,12 @@ exports.createRecipe = catchAsync(async (req, res) => {
   return res.send(recipeDetails);
 });
 
+exports.addRecipeLink = catchAsync(async (req, res) => {
+  logger.info('Attempting to add new recipe link...');
+  const recipeDetails = await recipeService.addRecipeLink(req);
+  return res.send(recipeDetails);
+});
+
 exports.getSampleRecipes = catchAsync(async (req, res) => {
   logger.info('Attempting to gather a number of random sample recipes');
   const recipes = await recipeService.getSampleRecipes(req.params.count);
@@ -22,10 +28,19 @@ exports.getSampleRecipes = catchAsync(async (req, res) => {
 
 exports.getRecipe = catchAsync(async (req, res) => {
   logger.info('Attempting to get recipe...');
-  const recipe = await recipeService.getRecipe(req.query);
-  if (!recipe) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Recipe not found');
-  }
+  const recipe = await recipeService.recipeRequest(req.query, 'recipes');
+  // if (!recipe) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'Recipe not found');
+  // }
+  return res.send(recipe);
+});
+
+exports.getRecipeLink = catchAsync(async (req, res) => {
+  logger.info('Attempting to get recipe links...');
+  const recipe = await recipeService.recipeRequest(req.query, 'recipeLinks');
+  // if (!recipe) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'Recipe link not found');
+  // }
   return res.send(recipe);
 });
 

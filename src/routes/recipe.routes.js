@@ -20,6 +20,11 @@ router
     .get([authJwt.verifyToken, validate(validation.getRecipe)], controller.getRecipe)
     .post([authJwt.verifyToken, validate(validation.createRecipe)], controller.createRecipe);
 
+router
+    .route('/link')
+    .get([authJwt.verifyToken, validate(validation.getRecipeLink)], controller.getRecipeLink)
+    .post([authJwt.verifyToken, validate(validation.addRecipeLink)], controller.addRecipeLink);
+
 router.get('/sampleRecipes/:count', [authJwt.verifyToken, validate(validation.sampleRecipes)],
     controller.getSampleRecipes);
 
