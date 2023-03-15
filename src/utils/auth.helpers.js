@@ -1,6 +1,6 @@
-const logger = require("../middleware/logger");
-const config = require("../config/auth.config");
-const db = require("../database/models");
+const logger = require('../middleware/logger');
+const config = require('../config/auth.config');
+const db = require('../database/models');
 const RefreshToken = db.refreshToken;
 
 async function updateRefreshExpiry(requestToken) {
@@ -9,15 +9,15 @@ async function updateRefreshExpiry(requestToken) {
   try {
     const expiredAt = new Date();
     expiredAt.setSeconds(expiredAt.getSeconds() + config.jwtRefreshExpiration);
-    const filter = { token: requestToken };
-    const update = { expiryDate: expiredAt };
+    const filter = {token: requestToken};
+    const update = {expiryDate: expiredAt};
     const updatedRefreshToken = await RefreshToken.findOneAndUpdate(
-      filter,
-      update
+        filter,
+        update,
     );
     return updatedRefreshToken;
   } catch (err) {
-    logger.error("Error attempting to update expiry on refresh token");
+    logger.error('Error attempting to update expiry on refresh token');
     logger.error(err);
     throw err;
   }

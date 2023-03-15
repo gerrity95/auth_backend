@@ -25,12 +25,10 @@ const options = {
 // eslint-disable-next-line max-len
 const url = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?authSource=${MONGO_DB}&replicaSet=replicaset&retryWrites=true`;
 
-console.log(url);
-
 mongoose.connect(url, options).then( function() {
   logger.info('MongoDB is connected');
   app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}.`);
+    logger.info(`Server is running on port ${PORT}.`);
   });
 }).catch( function(err) {
   logger.error(err);

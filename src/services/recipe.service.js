@@ -8,7 +8,6 @@ const ApiError = require('../utils/ApiError');
 const {validateCategories, getRandomInt} = require('../utils/recipe.helper');
 
 async function createRecipe(req) {
-  console.log(req.body);
   const categoryId = await Category.findOne({name: req.body.category});
   if (!categoryId) {
     logger.error(`Invalid Category: ${req.body.category} submitted with recipe.`);
@@ -58,7 +57,6 @@ async function createRecipe(req) {
   } catch (err) {
     logger.error('Error attempting to Create New Recipe');
     logger.error(err);
-    console.log(err);
     throw new ApiError(
         httpStatus.INTERNAL_SERVER_ERROR,
         'Error attempting to create recipe',
@@ -70,7 +68,6 @@ async function addRecipeLink(req) {
   // Function to add a recipe link to the DB
   const isExisting = await RecipeLink.findOne({website: req.body.website});
   if (isExisting) {
-    logger.info(isExisting);
     logger.info('Entry for recipe link already exists. Appending user ID to user array.');
     const update = await RecipeLink.updateOne(
         {_id: isExisting._id},
@@ -95,7 +92,6 @@ async function recipeRequest(query, requestType) {
       user_id: {$in: query.userId},
     }),
   };
-  console.log(queryBody);
   let recipes;
   if (requestType === 'recipes') {
     recipes = await Recipe.find(queryBody);
@@ -104,7 +100,6 @@ async function recipeRequest(query, requestType) {
   } else {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid request to get recipes');
   }
-  console.log(recipes);
   if (!recipes) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Unable to find any recipes.');
   }
@@ -129,7 +124,7 @@ async function bulkAddRecipes(body) {
   if (!validCategories) {
     throw new ApiError(
         httpStatus.BAD_REQUEST,
-        'Invalid categories passed in recipe body.'
+        'Invalid categories passed in recipe body.',
     );
   }
   const bulkAdd = await Recipe.insertMany(recipes);
@@ -144,7 +139,6 @@ async function addUser(params, body) {
       {_id: params.recipeID},
       {$addToSet: {user_id: body.user_id}},
   );
-  console.log(update);
   if (update.matchedCount === 0 && update.modifiedCount == 0) {
     logger.info('Unable to find requested recipe.');
     throw new ApiError(httpStatus.BAD_REQUEST, 'Unable to find recipe');
@@ -153,10 +147,9 @@ async function addUser(params, body) {
     logger.info('Unable to find requested recipe.');
     throw new ApiError(
         httpStatus.METHOD_NOT_ALLOWED,
-        'User is already part of recipe array'
+        'User is already part of recipe array',
     );
   }
-
   logger.info('Successfully added user to the recipe');
   return update;
 }
