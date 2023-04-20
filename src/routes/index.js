@@ -2,6 +2,7 @@ const express = require('express');
 const authRouter = require('./auth.routes');
 const userRouter = require('./user.routes');
 const recipeRouter = require('./recipe.routes');
+const statusRouter = require('./status.routes');
 const ApiError = require('../utils/ApiError');
 const httpStatus = require('http-status');
 
@@ -19,6 +20,10 @@ const defaultRoutes = [
   {
     path: '/recipe',
     route: recipeRouter,
+  },
+  {
+    path: '/status',
+    route: statusRouter,
   },
 ];
 
