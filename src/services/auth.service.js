@@ -53,8 +53,9 @@ async function signIn(req) {
         user.password,
     );
     if (!passwordIsValid) {
+      logger.error('Invalid username/password');
       return {
-        status: 401,
+        status: httpStatus.UNAUTHORIZED,
         data: {accessToken: null, message: 'Incorrect Username / Password'},
       };
     }
@@ -63,11 +64,14 @@ async function signIn(req) {
     });
     const refreshToken = await RefreshToken.createToken(user);
     return {
-      id: user._id,
-      username: user.username,
-      email: user.email,
-      accessToken: token,
-      refreshToken: refreshToken,
+      status: httpStatus.OK,
+      data: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        accessToken: token,
+        refreshToken: refreshToken,
+      },
     };
   } catch (err) {
     console.log('Error attempting to sign in');

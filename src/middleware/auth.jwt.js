@@ -1,15 +1,17 @@
 const logger = require('../middleware/logger');
 const jwt = require('jsonwebtoken');
 const config = require('../config/auth.config.js');
+const httpStatus = require('http-status');
 
 const {TokenExpiredError} = jwt;
 const catchError = (err, res) => {
   if (err instanceof TokenExpiredError) {
     logger.info('Access token has expired. Returning 401');
-    return res.status(401).send({message: 'Unauthorized! Access Token was expired!'});
+    return res.status(httpStatus.UNAUTHORIZED).send({
+      message: 'Unauthorized! Access Token was expired!'});
   }
   logger.error('Unauthorized request made');
-  return res.sendStatus(401).send({message: 'Unauthorized!'});
+  return res.status(httpStatus.UNAUTHORIZED).send({message: 'Unauthorized!'});
 };
 
 const verifyToken = (req, res, next) => {
@@ -19,7 +21,7 @@ const verifyToken = (req, res, next) => {
     const token = authHeader && authHeader.split(' ')[1];
     if (token == null) {
       logger.info('No token provided or incorrect header passed in through request.');
-      return res.status(401).send({message: 'No token provided!'});
+      return res.status(httpStatus.UNAUTHORIZED).send({message: 'No token provided!'});
     }
     jwt.verify(token, config.secret, (err, decoded) => {
       if (err) {
@@ -32,7 +34,7 @@ const verifyToken = (req, res, next) => {
     });
   } else {
     logger.info('No token provided in request');
-    return res.status(401).send({message: 'No token provided!'});
+    return res.status(httpStatus.UNAUTHORIZED).send({message: 'No token provided!'});
   }
 };
 

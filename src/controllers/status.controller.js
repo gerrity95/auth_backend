@@ -8,5 +8,5 @@ exports.appStatus = catchAsync(async function(req, res, next) {
   if (result !== 1) {
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'API is not in a healthy state');
   }
-  res.send(httpStatus.OK, 'API is in a healthy state.');
+  res.status(httpStatus.OK).send('API is in a healthy state.');
 });
